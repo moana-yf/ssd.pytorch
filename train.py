@@ -129,7 +129,8 @@ def train():
     epoch = 0
     print('Loading the dataset...')
 
-    epoch_size = len(dataset) // args.batch_size
+    # epoch_size = len(dataset) // args.batch_size
+    epoch_size = 3
     print("epoch size: ", epoch_size)
     print('Training SSD on:', dataset.name)
     print('Using the specified args:')
@@ -163,7 +164,19 @@ def train():
             adjust_learning_rate(optimizer, args.gamma, step_index)
 
         # load train data
-        images, targets = next(batch_iterator)
+        # try:
+        #     images, targets = next(batch_iterator)
+        # except StopIteration:
+        #     print('Batch complete')
+        #     break
+
+        try:
+            images, targets = next(batch_iterator)
+        except StopIteration:
+            batch_iterator = iter(data_loader)
+            images, targets = next(batch_iterator)
+                
+        # images, targets = next(batch_iterator)
 
         if args.cuda:
             images = Variable(images.cuda())
